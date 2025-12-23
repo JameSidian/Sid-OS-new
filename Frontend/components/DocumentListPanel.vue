@@ -1,18 +1,18 @@
 <template>
   <div
     v-if="isOpen"
-    class="absolute left-0 top-0 bottom-0 bg-white border-r border-slate-200 shadow-2xl z-30 transition-all overflow-hidden"
+    class="absolute left-0 top-0 bottom-0 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-2xl z-30 transition-all overflow-hidden"
     :style="{ width: `${width}px`, minWidth: '320px', maxWidth: '40%' }"
   >
     <!-- Header -->
-    <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-700">
+    <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 flex items-center justify-between">
       <div>
-        <h3 class="font-bold text-lg">{{ title || 'Documents' }}</h3>
-        <p v-if="subtitle" class="text-xs text-slate-300 mt-1">{{ subtitle }}</p>
+        <h3 class="font-semibold text-lg text-gray-900" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ title || 'Documents' }}</h3>
+        <p v-if="subtitle" class="text-xs text-gray-500 mt-1" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ subtitle }}</p>
       </div>
       <button
         @click="$emit('close')"
-        class="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+        class="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
         title="Close"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,17 +23,17 @@
 
     <!-- Resize Handle -->
     <div
-      class="absolute right-0 top-0 bottom-0 w-1 bg-slate-200 cursor-ew-resize hover:bg-purple-500 transition-colors"
+      class="absolute right-0 top-0 bottom-0 w-1 bg-gray-200 cursor-ew-resize hover:bg-purple-400 transition-colors"
       @mousedown="handleResizeStart"
     ></div>
 
     <!-- Document List -->
     <div class="flex-1 overflow-y-auto p-4">
       <div v-if="documents.length === 0" class="text-center py-12">
-        <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <p class="text-slate-400 font-medium">No documents found</p>
+        <p class="text-gray-400 font-medium" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">No documents found</p>
       </div>
 
       <div v-else class="space-y-2">
@@ -42,14 +42,14 @@
           :key="doc.id || index"
           @click="selectDocument(doc)"
           :class="[
-            'p-4 rounded-lg border-2 cursor-pointer transition-all',
+            'p-4 rounded-xl border-2 cursor-pointer transition-all backdrop-blur-sm',
             selectedDocumentId === doc.id
-              ? 'border-purple-500 bg-purple-50 shadow-md'
-              : 'border-slate-200 hover:border-purple-300 hover:bg-slate-50'
+              ? 'border-purple-400 bg-purple-50/80 shadow-lg'
+              : 'border-gray-200 bg-white/60 hover:border-purple-300 hover:bg-white/80 hover:shadow-md'
           ]"
         >
           <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center shadow-sm">
               <!-- Show 3D/cube icon for Speckle models, document icon for PDFs -->
               <svg v-if="doc.metadata?.projectId && doc.metadata?.modelId" class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -59,18 +59,19 @@
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-semibold text-slate-900 mb-1 truncate">{{ doc.title || doc.name || 'Untitled Document' }}</h4>
-              <p v-if="doc.description" class="text-sm text-slate-600 mb-2 line-clamp-2">{{ doc.description }}</p>
+              <h4 class="font-semibold text-gray-900 mb-1 truncate" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ doc.title || doc.name || 'Untitled Document' }}</h4>
+              <p v-if="doc.description" class="text-sm text-gray-600 mb-2 line-clamp-2" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ doc.description }}</p>
               <div v-if="doc.metadata" class="flex flex-wrap gap-2">
                 <span
                   v-for="(value, key) in doc.metadata"
                   :key="key"
-                  class="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded"
+                  class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
+                  style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"
                 >
                   {{ key }}: {{ value }}
                 </span>
               </div>
-              <div v-if="doc.reason" class="mt-2 p-2 bg-purple-50 border border-purple-200 rounded text-xs text-purple-800">
+              <div v-if="doc.reason" class="mt-2 p-2 bg-purple-50/80 backdrop-blur-sm border border-purple-200 rounded-lg text-xs text-purple-800" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
                 <span class="font-semibold">Why selected:</span> {{ doc.reason }}
               </div>
             </div>

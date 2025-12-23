@@ -134,25 +134,38 @@ Generate the complete proposal text.`
   }
 
   /**
-   * Export proposal to Word via local agent
+   * Export proposal to Word via backend API
    */
   async function exportToWord(content: string, fileName: string): Promise<void> {
-    // This will call the local agent API
-    // For now, we'll use a placeholder endpoint
     const url = `${config.public.orchestratorUrl}/export/word`
     
     try {
-      // Use Nuxt's $fetch (auto-imported)
-      await $fetch(url, {
+      // Use Nuxt's $fetch (auto-imported) to get the file as blob
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: {
+        body: JSON.stringify({
           content,
           file_name: fileName
-        }
+        })
       })
+      
+      if (!response.ok) {
+        throw new Error(`Export failed: ${response.statusText}`)
+      }
+      
+      // Get the blob and trigger download
+      const blob = await response.blob()
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(downloadUrl)
     } catch (error) {
       console.error('Word export error:', error)
       throw error

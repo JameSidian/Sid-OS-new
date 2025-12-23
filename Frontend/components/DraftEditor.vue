@@ -45,7 +45,7 @@
           <div
             ref="editorRef"
             contenteditable="true"
-            class="prose prose-lg max-w-4xl mx-auto focus:outline-none"
+            class="prose mx-auto focus:outline-none"
             :class="{ 'opacity-50': loading }"
             @input="handleInput"
             @paste="handlePaste"
@@ -372,130 +372,177 @@ defineExpose({
 
 <style scoped>
 .prose {
-  @apply text-slate-900;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  font-size: 16px;
-  line-height: 1.7;
-  color: #1e293b;
+  @apply text-gray-900;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  color: #1f2937;
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 1in;
 }
 
 .prose h1 {
-  @apply text-4xl font-bold mb-6 mt-10;
-  color: #0f172a;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0.5rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 18pt;
+  font-weight: bold;
+  margin-top: 24pt;
+  margin-bottom: 12pt;
+  color: #000000;
+  line-height: 1.3;
+  text-align: center;
+  page-break-after: avoid;
 }
 
 .prose h2 {
-  @apply text-3xl font-bold mb-4 mt-8;
-  color: #1e293b;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14pt;
+  font-weight: bold;
+  margin-top: 18pt;
+  margin-bottom: 10pt;
+  color: #000000;
   line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  text-indent: 0;
+  page-break-after: avoid;
 }
 
 .prose h3 {
-  @apply text-2xl font-semibold mb-3 mt-6;
-  color: #334155;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  font-weight: bold;
+  margin-top: 12pt;
+  margin-bottom: 6pt;
+  color: #000000;
   line-height: 1.4;
-  font-weight: 600;
+  text-indent: 0;
+  page-break-after: avoid;
 }
 
 .prose h4 {
-  @apply text-xl font-semibold mb-2 mt-5;
-  color: #475569;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  font-weight: bold;
+  font-style: italic;
+  margin-top: 10pt;
+  margin-bottom: 6pt;
+  color: #000000;
   line-height: 1.4;
-  font-weight: 600;
+  text-indent: 0;
+  page-break-after: avoid;
 }
 
 .prose p {
-  @apply mb-6;
-  line-height: 1.85;
-  font-size: 16px;
-  color: #1e293b;
-  text-align: left;
-  margin-top: 0.5rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  margin-top: 0;
+  margin-bottom: 12pt;
+  text-align: justify;
+  text-indent: 0.5in;
+  color: #000000;
 }
 
-.prose ul, .prose ol {
-  @apply mb-5 ml-8;
-  line-height: 1.75;
+.prose p:first-of-type,
+.prose h1 + p,
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p {
+  text-indent: 0;
 }
 
-.prose ul {
-  list-style-type: disc;
-  list-style-position: outside;
-  padding-left: 2rem;
-  margin: 1rem 0;
-}
-
+.prose ul,
 .prose ol {
-  list-style-type: decimal;
-  list-style-position: outside;
-  padding-left: 2rem;
-  margin: 1rem 0;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  margin-top: 6pt;
+  margin-bottom: 12pt;
+  margin-left: 0.5in;
+  padding-left: 0.25in;
+  color: #000000;
 }
 
 .prose li {
-  margin: 0.75rem 0;
-  line-height: 1.75;
-  color: #1e293b;
-  display: list-item;
-  padding-left: 0.5rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  margin-bottom: 6pt;
+  color: #000000;
 }
 
-.prose li::marker {
-  color: #6366f1;
-  font-weight: 600;
-  font-size: 1.1em;
-}
-
-.prose strong,
-.prose b {
-  font-weight: 600;
-  color: #0f172a;
+.prose strong {
+  font-weight: bold;
+  color: #000000;
 }
 
 .prose em {
-  @apply italic;
-  font-style: italic;
-}
-
-.prose a {
-  @apply text-purple-600 underline;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.prose a:hover {
-  @apply text-purple-700;
-}
-
-.prose blockquote {
-  @apply border-l-4 border-purple-300 pl-6 italic my-6;
-  color: #475569;
   font-style: italic;
 }
 
 .prose code {
-  @apply bg-slate-100 px-2 py-1 rounded text-sm font-mono;
-  color: #dc2626;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11pt;
+  background-color: #f3f4f6;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 
 .prose pre {
-  @apply bg-slate-100 p-4 rounded-lg overflow-x-auto my-4;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11pt;
+  background-color: #f3f4f6;
+  padding: 12pt;
+  border-radius: 4px;
+  margin-top: 6pt;
+  margin-bottom: 12pt;
+  overflow-x: auto;
 }
 
-.prose pre code {
-  @apply bg-transparent p-0;
-  color: inherit;
+.prose blockquote {
+  border-left: 4px solid #d1d5db;
+  padding-left: 12pt;
+  margin-left: 0.5in;
+  margin-top: 6pt;
+  margin-bottom: 12pt;
+  font-style: italic;
+  color: #4b5563;
+}
+
+.prose table {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12pt;
+  margin-bottom: 12pt;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #d1d5db;
+  padding: 6pt;
+  text-align: left;
+}
+
+.prose th {
+  font-weight: bold;
+  background-color: #f3f4f6;
 }
 
 .prose hr {
-  @apply border-t border-slate-300 my-8;
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin-top: 24pt;
+  margin-bottom: 24pt;
+}
+
+.prose a {
+  color: #0000EE;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #551A8B;
 }
 
 /* Better focus styles for contenteditable */
@@ -508,12 +555,14 @@ defineExpose({
   outline-offset: 2px;
 }
 
-/* Ensure proper spacing for nested lists */
+/* Nested lists */
 .prose ul ul,
 .prose ol ol,
 .prose ul ol,
 .prose ol ul {
-  @apply mt-2 mb-2 ml-6;
+  margin-top: 6pt;
+  margin-bottom: 6pt;
+  margin-left: 0.25in;
 }
 </style>
 

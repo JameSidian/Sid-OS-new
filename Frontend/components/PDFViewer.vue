@@ -151,8 +151,14 @@ const actualPdfUrl = computed(() => {
   // If it's a relative path starting with /, construct full URL using current origin
   if (url.startsWith('/')) {
     // Use current window location to get the base URL
+    // Encode the path properly to handle spaces and special characters in filenames
     if (typeof window !== 'undefined') {
-      return `${window.location.origin}${url}`
+      // Split the path into directory parts and encode each segment separately
+      // This preserves slashes while encoding spaces and special chars in filenames
+      const pathParts = url.split('/').filter(p => p) // Remove empty strings
+      const encodedParts = pathParts.map(part => encodeURIComponent(part))
+      const encodedPath = '/' + encodedParts.join('/')
+      return `${window.location.origin}${encodedPath}`
     }
     // Fallback for SSR
     return url

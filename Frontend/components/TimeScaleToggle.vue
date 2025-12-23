@@ -1,14 +1,14 @@
 <template>
-  <div class="flex items-center gap-2 bg-foundation rounded-lg p-1">
+  <div class="flex items-center gap-2 bg-gray-100 rounded-xl p-1 backdrop-blur-sm">
     <button
       v-for="option in options"
       :key="option.value"
       @click="$emit('update:modelValue', option.value)"
       :class="[
-        'px-4 py-2 text-sm font-medium rounded transition-colors',
+        'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
         modelValue === option.value
-          ? 'bg-primary text-primary-content'
-          : 'text-foreground-muted hover:text-foreground'
+          ? 'bg-blue-500 text-white shadow-md'
+          : 'text-gray-600 hover:text-gray-900'
       ]"
     >
       {{ option.label }}

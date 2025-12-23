@@ -4,7 +4,7 @@
  */
 
 export interface RFPProposalState {
-  step: 'initial' | 'rfp_found' | 'rfp_opened' | 'keypoints_shared' | 'examples_added' | 'template_added' | 'proposal_written'
+  step: 'initial' | 'rfp_found' | 'rfp_opened' | 'keypoints_shared' | 'examples_added' | 'template_added' | 'proposal_written' | 'section_added'
   rfpPath?: string
   rfpFileName?: string
   projectFolder?: string
@@ -29,7 +29,7 @@ export interface Document {
 export function extractProjectFolder(message: string): string | null {
   const projectPattern = /\b(?:project\s+)?(\d{4}-\d{2}-\d{3})\b/i
   const match = message.match(projectPattern)
-  return match ? match[1] : null
+  return match && match[1] ? match[1] : null
 }
 
 /**
@@ -81,10 +81,10 @@ Finally, phasing, early bid packages, and constructability are central to meetin
 export function getExampleReport(): Document {
   return {
     id: 'example-report-1',
-    title: 'Multi-level parking Garage.docx',
+    title: 'Multi-level parking Garage.pdf',
     name: 'Multi-level parking Garage',
-    filePath: '/writing/Multi-level parking Garage.docx',
-    url: '/writing/Multi-level parking Garage.docx',
+    filePath: '/writing/Multi-level parking Garage.pdf',
+    url: '/writing/Multi-level parking Garage.pdf',
     description: 'Example report from a similar past project',
     reason: 'Similar structural engineering scope and complexity'
   }
@@ -96,55 +96,95 @@ export function getExampleReport(): Document {
 export function getProposalTemplate(): Document {
   return {
     id: 'proposal-template-1',
-    title: 'RFPTemplate.pdf',
+    title: 'Template Proposal.pdf',
     name: 'RFP Template',
-    filePath: '/writing/RFPTemplate.pdf',
-    url: '/writing/RFPTemplate.pdf',
+    filePath: '/writing/Template Proposal.pdf',
+    url: '/writing/Template Proposal.pdf',
     description: 'Company standard proposal template',
     reason: 'Standard format and structure for proposals'
   }
 }
 
 /**
- * Read proposal content from CooperProposals.pdf
- * In production, this would extract text from the PDF via backend
+ * Read proposal content from finalword.txt
  */
 export async function readProposalContent(): Promise<string> {
-  // For demo, return a sample proposal structure
-  // In production, this would extract text from CooperProposals.pdf
-  return `<h1>Proposal: Structural Engineering Services</h1>
-
-<h2>Executive Summary</h2>
-<p>This proposal outlines our approach to providing structural engineering services for the Cooper Master Campus Plan project. Our team brings extensive experience in healthcare facility design and complex urban construction projects.</p>
-
-<h2>Project Understanding</h2>
-<p>We have thoroughly reviewed the RFP and understand the complexity of this multi-phase healthcare development. Key considerations include:</p>
-<ul>
-<li>Deep foundations and below-grade construction below the groundwater table</li>
-<li>Integration with existing structures including the Kelemen and Roberts Pavilion buildings</li>
-<li>Multi-story pedestrian bridge over Haddon Avenue</li>
-<li>Future expandability for Towers B and C</li>
-<li>Structural support for major MEP and energy infrastructure</li>
-</ul>
-
-<h2>Our Approach</h2>
-<p>Our structural engineering team will work closely with the design team to develop solutions that address all RFP requirements while maintaining constructability and cost-effectiveness.</p>
-
-<h2>Key Structural Components</h2>
-<p>Based on our analysis of similar projects and the specific requirements of this RFP, we will focus on:</p>
-<ul>
-<li>Foundation design and geotechnical coordination</li>
-<li>Lateral system design with future expandability in mind</li>
-<li>Integration with existing structures</li>
-<li>MEP coordination and load path resolution</li>
-<li>Phased construction and constructability reviews</li>
-</ul>
-
-<h2>Timeline and Deliverables</h2>
-<p>We propose to deliver all required structural engineering services according to the project schedule, with early foundation and steel packages to support the aggressive construction timeline.</p>
-
-<h2>Team and Experience</h2>
-<p>Our team has extensive experience with similar healthcare facility projects and complex urban construction. We understand the challenges of working in an active healthcare environment and the importance of minimizing disruption.</p>`
+  try {
+    // Load content from finalword.txt
+    const response = await fetch('/writing/finalword.txt')
+    if (!response.ok) {
+      throw new Error('Failed to load finalword.txt')
+    }
+    const textContent = await response.text()
+    
+    // Convert plain text to HTML format for the editor
+    // Split by double newlines to identify paragraphs
+    const paragraphs = textContent.split(/\n\n+/).filter(p => p.trim())
+    
+    let htmlContent = ''
+    
+    for (const para of paragraphs) {
+      const trimmed = para.trim()
+      if (!trimmed) continue
+      
+      // Check if it's a heading (all caps or starts with number)
+      const firstLine = trimmed.split('\n')[0]?.trim() || ''
+      if (/^\d+\.\s+[A-Z]/.test(trimmed) || (firstLine && /^[A-Z][A-Z\s]{20,}$/.test(firstLine))) {
+        // It's likely a heading
+        const lines = trimmed.split('\n')
+        const headingFirstLine = lines[0]?.trim() || ''
+        
+        // Remove leading numbers if present
+        const headingText = headingFirstLine.replace(/^\d+\.\s*/, '')
+        
+        // Determine heading level based on formatting
+        if (headingText && /^[A-Z][A-Z\s]{30,}$/.test(headingText)) {
+          // All caps long line = H1
+          htmlContent += `<h1>${headingText}</h1>\n\n`
+        } else if (headingFirstLine && /^\d+\./.test(headingFirstLine)) {
+          // Numbered section = H2
+          htmlContent += `<h2>${headingText}</h2>\n\n`
+        } else if (headingText) {
+          // Regular heading = H2
+          htmlContent += `<h2>${headingText}</h2>\n\n`
+        }
+        
+        // Add remaining lines as paragraphs
+        if (lines.length > 1) {
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i]?.trim()
+            if (line) {
+              htmlContent += `<p>${line}</p>\n\n`
+            }
+          }
+        }
+      } else if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*') || trimmed.includes('•')) {
+        // It's a list item
+        const items = trimmed.split(/\n(?=[•\-*])/).filter(item => item.trim())
+        htmlContent += '<ul>\n'
+        for (const item of items) {
+          const cleanItem = item.replace(/^[•\-*]\s*/, '').trim()
+          if (cleanItem) {
+            htmlContent += `<li>${cleanItem}</li>\n`
+          }
+        }
+        htmlContent += '</ul>\n\n'
+      } else {
+        // Regular paragraph
+        // Replace single newlines with spaces, but preserve structure
+        const formatted = trimmed.split('\n').map(line => line.trim()).filter(line => line).join(' ')
+        if (formatted) {
+          htmlContent += `<p>${formatted}</p>\n\n`
+        }
+      }
+    }
+    
+    return htmlContent
+  } catch (error) {
+    console.error('Error loading finalword.txt:', error)
+    // Fallback to a simple message
+    return '<p>Error loading proposal content. Please check that finalword.txt exists.</p>'
+  }
 }
 
 export const useRFPProposalWorkflow = () => {

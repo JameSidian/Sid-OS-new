@@ -23,7 +23,7 @@ export interface SimilarProject {
 }
 
 export interface ModelDesignState {
-  step: 'initial' | 'asking_questions' | 'confirmed' | 'projects_found' | 'model_created'
+  step: 'initial' | 'asking_questions' | 'confirmed' | 'projects_found' | 'model_created' | 'mto_shown'
   parameters: ProjectParameter
   projects?: SimilarProject[]
 }

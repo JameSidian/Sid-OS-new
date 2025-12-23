@@ -1,7 +1,7 @@
 <template>
-  <div class="h-full w-full flex flex-col bg-white">
+  <div class="h-full w-full flex flex-col bg-white/95 backdrop-blur-sm">
     <!-- Chat Header -->
-    <div class="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+    <div class="p-6 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
       <div class="flex items-center gap-3 mb-2">
         <img 
           src="/logo.png" 
@@ -10,14 +10,14 @@
           @error="handleLogoError"
         />
         <div>
-          <h3 class="font-bold text-slate-900 text-lg">Sid</h3>
-          <p class="text-xs text-slate-500 mt-0.5">The Autonomous Engineer</p>
+          <h3 class="font-semibold text-gray-900 text-lg" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">Sid</h3>
+          <p class="text-xs text-gray-500 mt-0.5" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">The Autonomous Engineer</p>
         </div>
       </div>
     </div>
 
     <!-- Messages -->
-    <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
+    <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white/30 backdrop-blur-sm">
       <div
         v-for="message in messages"
         :key="message.id"
@@ -28,21 +28,43 @@
           class="max-w-[85%] rounded-2xl p-4 shadow-sm"
           :class="
             message.role === 'user'
-              ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white'
-              : 'bg-white text-slate-800 border border-slate-200 shadow-md'
+              ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg'
+              : 'bg-white/90 backdrop-blur-sm text-gray-800 border border-gray-200 shadow-md'
           "
         >
           <div 
             v-if="message.role === 'assistant'"
             class="text-sm leading-relaxed"
+            style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"
           >
             <span v-html="formatMessage(message.content)"></span>
-            <span v-if="message.isTyping" class="inline-block w-2 h-4 bg-slate-600 animate-pulse ml-1">|</span>
+            <span v-if="message.isTyping" class="inline-block w-2 h-4 bg-gray-800 animate-pulse ml-1">|</span>
           </div>
           <p 
             v-else
             class="whitespace-pre-wrap text-sm leading-relaxed"
+            style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"
           >{{ message.content }}</p>
+          <!-- Images -->
+          <div
+            v-if="message.images && message.images.length > 0"
+            class="mt-3 space-y-3"
+          >
+            <div
+              v-for="(image, idx) in message.images"
+              :key="idx"
+              class="space-y-1"
+            >
+              <img
+                :src="image.url"
+                :alt="image.caption || 'Detail image'"
+                class="rounded-lg border border-gray-200 shadow-md max-w-full h-auto"
+              />
+              <p v-if="image.caption" class="text-xs text-gray-500 italic">
+                {{ image.caption }}
+              </p>
+            </div>
+          </div>
           <!-- Model open button -->
           <div
             v-if="message.modelUrl"
@@ -58,8 +80,8 @@
               View Model in Viewer
             </button>
           </div>
-          <div v-if="message.source" class="flex items-center gap-2 mt-3 pt-3 border-t" :class="message.role === 'user' ? 'border-purple-500/30' : 'border-slate-200'">
-            <span class="text-xs font-medium" :class="message.role === 'user' ? 'text-purple-100' : 'text-slate-500'">
+          <div v-if="message.source" class="flex items-center gap-2 mt-3 pt-3 border-t" :class="message.role === 'user' ? 'border-purple-500/30' : 'border-gray-200'">
+            <span class="text-xs font-medium" :class="message.role === 'user' ? 'text-purple-100' : 'text-gray-500'" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
               {{ message.source === 'speckle' ? '🔷 BIM Data' : message.source === 'rag' ? '📄 Documents' : '🔷📄 Multi-source' }}
             </span>
           </div>
@@ -76,14 +98,14 @@
             class="h-5 w-5 animate-spin rounded-full border-2 border-purple-600 border-t-transparent"
           />
         </div>
-        <div class="flex-1 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
-          <p class="text-sm font-medium text-slate-800">{{ thinkingMessage || 'Thinking...' }}</p>
+        <div class="flex-1 bg-white/90 backdrop-blur-sm rounded-2xl p-4 border border-gray-200 shadow-sm">
+          <p class="text-sm font-medium text-gray-800" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ thinkingMessage || 'Thinking...' }}</p>
         </div>
       </div>
     </div>
 
     <!-- Input -->
-    <div class="border-t border-slate-200 bg-white p-4">
+    <div class="border-t border-gray-200 bg-white/80 backdrop-blur-sm p-4">
       <!-- Database Toggles -->
       <div class="mb-3 flex items-center gap-2">
         <button
@@ -139,7 +161,8 @@
           v-model="inputMessage"
           type="text"
           placeholder="Ask about projects, models, or documents..."
-          class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm transition-all"
+          class="flex-1 px-4 py-3 rounded-xl border border-gray-300 bg-white/80 backdrop-blur-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm transition-all"
+          style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"
           :disabled="isLoading"
         />
         <button
@@ -180,6 +203,7 @@ interface Message {
   modelUrl?: string
   modelName?: string
   isTyping?: boolean
+  images?: Array<{ url: string; caption?: string }>
 }
 
 const messages = ref<Message[]>([])
@@ -265,143 +289,68 @@ const emit = defineEmits<{
   'agent-log': [log: import('~/components/AgentLogsPanel').AgentLog]
   messageSent: [message: string]
   responseReceived: [response: any]
+  'first-message-sent': []
 }>()
 
 function emitAgentLog(log: import('~/components/AgentLogsPanel').AgentLog) {
   emit('agent-log', log)
 }
 
-function detectAddSectionIntent(message: string): boolean {
-  const lower = message.toLowerCase()
-  
-  // Check if user wants to add a section to the draft/proposal
-  const addSectionKeywords = ['add', 'insert', 'create', 'include']
-  const sectionKeywords = ['section', 'part', 'paragraph']
-  const pastProjectsKeywords = ['past project', 'similar project', 'previous project', 'past similar', 'similar work', 'proof we have done']
-  
-  const hasAddKeyword = addSectionKeywords.some(kw => lower.includes(kw))
-  const hasSectionKeyword = sectionKeywords.some(kw => lower.includes(kw))
-  const hasPastProjectsKeyword = pastProjectsKeywords.some(kw => lower.includes(kw))
-  
-  // Check if we're in draft editing mode (proposal is open)
-  const isDraftOpen = workspace?.state.value.mode === 'draft'
-  
-  // Must be in draft mode and have relevant keywords
-  return isDraftOpen && hasAddKeyword && (hasSectionKeyword || hasPastProjectsKeyword)
+// Determine next step in RFP workflow based on current state
+function getNextRFPStep():
+  | 'new_rfp'
+  | 'open_rfp'
+  | 'keypoints'
+  | 'example_report'
+  | 'template'
+  | 'write_proposal'
+  | 'add_section'
+  | 'export_word'
+  | null {
+  switch (rfpProposalState.value.step) {
+    case 'initial':
+      return 'new_rfp'
+    case 'rfp_found':
+      return 'open_rfp'
+    case 'rfp_opened':
+      return 'keypoints'
+    case 'keypoints_shared':
+      return 'example_report'
+    case 'examples_added':
+      return 'template'
+    case 'template_added':
+      return 'write_proposal'
+    case 'proposal_written':
+      return 'add_section'
+    case 'section_added':
+      return 'export_word'
+    default:
+      return null
+  }
 }
 
-function detectRFPIntent(message: string): {
-  isRFP: boolean
-  action?: 'new_rfp' | 'open_rfp' | 'keypoints' | 'example_report' | 'template' | 'write_proposal' | 'analyze' | 'find_similar' | 'export_word' | 'add_section'
-  rfpPath?: string
-} {
-  const lower = message.toLowerCase()
-  
-  // Check for RFP-related keywords
-  const rfpKeywords = ['rfp', 'request for proposal', 'proposal', 'bid', 'tender']
-  const hasRFPKeyword = rfpKeywords.some(kw => lower.includes(kw))
-  
-  // Check for "new RFP in project" pattern
-  const projectFolder = extractProjectFolder(message)
-  if (projectFolder && (lower.includes('new rfp') || lower.includes('rfp in'))) {
-    return { isRFP: true, action: 'new_rfp' }
+// Determine next step in model design workflow based on current state
+function getNextModelDesignStep():
+  | 'initial_request'
+  | 'confirm_parameters'
+  | 'create_bridge'
+  | 'show_mto_details'
+  | null {
+  switch (modelDesignState.value.step) {
+    case 'initial':
+      return 'initial_request'
+    case 'asking_questions':
+      return 'confirm_parameters'
+    case 'confirmed':
+      // After confirming parameters, project search runs automatically inside the handler
+      return null
+    case 'projects_found':
+      return 'create_bridge'
+    case 'model_created':
+      return 'show_mto_details'
+    default:
+      return null
   }
-  
-  // Check if user wants to open the found RFP
-  if (rfpProposalState.value.step === 'rfp_found' && (lower.includes('yes') || lower.includes('open') || lower.includes('sure'))) {
-    return { isRFP: true, action: 'open_rfp' }
-  }
-  
-  // Check for keypoints request (after RFP is opened, "yes" means keypoints)
-  if (rfpProposalState.value.step === 'rfp_opened' && (lower.includes('yes') || lower.includes('sure'))) {
-    return { isRFP: true, action: 'keypoints' }
-  }
-  
-  // Check for keypoints request by keywords
-  if ((lower.includes('key') && lower.includes('consider')) || lower.includes('summary') || lower.includes('key things')) {
-    return { isRFP: true, action: 'keypoints' }
-  }
-  
-  // Check for example report request (after keypoints are shared, "yes" means example report)
-  if (rfpProposalState.value.step === 'keypoints_shared' && (lower.includes('yes') || lower.includes('sure') || lower.includes('find'))) {
-    return { isRFP: true, action: 'example_report' }
-  }
-  
-  // Check for example report request by keywords
-  if (lower.includes('example') && (lower.includes('report') || lower.includes('similar'))) {
-    return { isRFP: true, action: 'example_report' }
-  }
-  
-  // Check for template request (if agent asks)
-  if (rfpProposalState.value.step === 'examples_added' && (lower.includes('yes') || lower.includes('sure') || lower.includes('open'))) {
-    return { isRFP: true, action: 'template' }
-  }
-  
-  // Check for write proposal request (after template is added, "yes" means write proposal)
-  if (rfpProposalState.value.step === 'template_added' && (lower.includes('yes') || lower.includes('sure') || lower.includes('write') || lower.includes('ready'))) {
-    return { isRFP: true, action: 'write_proposal' }
-  }
-  
-  // Check for write proposal request by keywords
-  if (lower.includes('write') && (lower.includes('proposal') || lower.includes('report'))) {
-    return { isRFP: true, action: 'write_proposal' }
-  }
-  
-  // Check for add section intent (must be in draft mode)
-  if (detectAddSectionIntent(message)) {
-    return { isRFP: true, action: 'add_section' }
-  }
-  
-  if (!hasRFPKeyword) {
-    return { isRFP: false }
-  }
-
-  // Detect specific actions
-  if (lower.includes('similar') || lower.includes('past project')) {
-    return { isRFP: true, action: 'find_similar' }
-  }
-  
-  if (lower.includes('export') || lower.includes('word') || lower.includes('document')) {
-    return { isRFP: true, action: 'export_word' }
-  }
-  
-  // Default: analyze RFP
-  return { isRFP: true, action: 'analyze' }
-}
-
-function detectModelDesignIntent(message: string): {
-  isModelDesign: boolean
-  action?: 'initial_request' | 'confirm_parameters' | 'create_bridge'
-} {
-  const lower = message.toLowerCase()
-  
-  // Check for bridge design keywords with span requirement
-  const bridgeKeywords = ['bridge', 'design']
-  const spanKeywords = ['span', 'meters', 'metres', 'm', 'goes over']
-  const projectKeywords = ['project', 'new project', 'require']
-  
-  const hasBridgeKeyword = bridgeKeywords.some(kw => lower.includes(kw))
-  const hasSpanKeyword = spanKeywords.some(kw => lower.includes(kw)) || extractSpanRequirement(message) !== null
-  const hasProjectKeyword = projectKeywords.some(kw => lower.includes(kw))
-  
-  // Check if user is confirming parameters - if we're asking questions, ANY response is parameter confirmation
-  if (modelDesignState.value.step === 'asking_questions') {
-    return { isModelDesign: true, action: 'confirm_parameters' }
-  }
-  
-  // Check if user wants to create a specific bridge type
-  if (modelDesignState.value.step === 'projects_found' && 
-      (lower.includes('arch') || lower.includes('bridge') || 
-       lower.includes('would like') || lower.includes('want'))) {
-    return { isModelDesign: true, action: 'create_bridge' }
-  }
-  
-  // Initial request: bridge design with span requirement
-  if (hasBridgeKeyword && hasSpanKeyword && hasProjectKeyword) {
-    return { isModelDesign: true, action: 'initial_request' }
-  }
-  
-  return { isModelDesign: false }
 }
 
 async function handleSend() {
@@ -410,6 +359,9 @@ async function handleSend() {
   const userMessage = inputMessage.value.trim()
   inputMessage.value = ''
 
+  // Check if this is the first user message
+  const isFirstMessage = messages.value.filter(m => m.role === 'user').length === 0
+
   messages.value.push({
     id: Date.now().toString(),
     role: 'user',
@@ -417,180 +369,49 @@ async function handleSend() {
     timestamp: new Date()
   })
 
+  // Emit event when first message is sent to hide welcome screen
+  if (isFirstMessage) {
+    emit('first-message-sent')
+  }
+
   isLoading.value = true
   await scrollToBottom()
 
-  // Check for model design workflow
-  const modelDesignIntent = detectModelDesignIntent(userMessage)
+  // Check for active workflows and advance to next step
+  // Prioritize model design if active, then RFP
   
-  if (modelDesignIntent.isModelDesign && modelDesignIntent.action) {
-    await handleModelDesignWorkflow(userMessage, modelDesignIntent.action)
+  if (modelDesignState.value.step !== 'initial') {
+    const nextStep = getNextModelDesignStep()
+    if (nextStep) {
+      await handleModelDesignWorkflow(userMessage, nextStep)
+    isLoading.value = false
+    await scrollToBottom()
+    return
+    }
+  }
+  
+  if (rfpProposalState.value.step !== 'initial') {
+    const nextStep = getNextRFPStep()
+    if (nextStep) {
+      await handleRFPWorkflow(userMessage, nextStep)
+    isLoading.value = false
+    await scrollToBottom()
+    return
+  }
+  }
+
+  // No active workflow - start Model Design workflow by default
+  // This ensures messages always follow the workflow, regardless of input
+  if (rfpProposalState.value.step === 'initial' && modelDesignState.value.step === 'initial') {
+    await handleModelDesignWorkflow(userMessage, 'initial_request')
     isLoading.value = false
     await scrollToBottom()
     return
   }
 
-  // Check for RFP workflow
-  const rfpIntent = detectRFPIntent(userMessage)
-  console.log('RFP Intent check:', { 
-    message: userMessage, 
-    intent: rfpIntent, 
-    currentStep: rfpProposalState.value.step 
-  })
-  
-  if (rfpIntent.isRFP && rfpIntent.action) {
-    console.log('Handling RFP workflow:', rfpIntent.action)
-    await handleRFPWorkflow(userMessage, rfpIntent.action)
+  // Should not reach here, but just in case
     isLoading.value = false
     await scrollToBottom()
-    return
-  }
-
-  // Emit natural thinking log
-  emitAgentLog({
-    id: `thinking-${Date.now()}`,
-    type: 'thinking',
-    thinking: `**Received your question:** "${userMessage}"\n\nAnalyzing the query to determine the best approach...`,
-    timestamp: new Date()
-  })
-
-  try {
-    const intent = determineQueryIntent(userMessage)
-    
-    // Emit reasoning thinking
-    const intentDescription = intent === 'speckle' 
-      ? 'This appears to be a BIM or structural model query. I\'ll search our 3D model database.' 
-      : intent === 'rag'
-      ? 'This looks like a document or specification question. I\'ll search our knowledge base of PDFs and technical documents.'
-      : 'This query spans both BIM models and documents. I\'ll search both systems to provide a comprehensive answer.'
-    
-    emitAgentLog({
-      id: `reasoning-${Date.now()}`,
-      type: 'thinking',
-      thinking: `**Understanding your question:**\n\n${intentDescription}\n\n- Detected keywords suggest this is a **${intent === 'speckle' ? 'BIM/Model' : intent === 'rag' ? 'Document' : 'Hybrid'}** query\n- Routing to appropriate data sources`,
-      timestamp: new Date()
-    })
-
-    if (intent === 'speckle' || intent === 'hybrid') {
-      emitAgentLog({
-        id: `search-bim-${Date.now()}`,
-        type: 'action',
-        thinking: `**Searching BIM database:**\n\n- Querying Speckle GraphQL API\n- Searching for structural elements, models, and 3D geometry\n- Filtering results based on your question`,
-        timestamp: new Date()
-      })
-    }
-
-    if (intent === 'rag' || intent === 'hybrid') {
-      emitAgentLog({
-        id: `search-doc-${Date.now()}`,
-        type: 'action',
-        thinking: `**Searching document database:**\n\n- Querying Supabase vector database\n- Searching through PDFs, specifications, and technical documents\n- Finding relevant sections and pages`,
-        timestamp: new Date()
-      })
-    }
-
-    // Make API call
-    const enabledSources = [
-      dataSources.value.project_db && 'Project DB',
-      dataSources.value.code_db && 'Code DB',
-      dataSources.value.coop_manual && 'Coop DB'
-    ].filter(Boolean).join(', ')
-    
-    emitAgentLog({
-      id: `connecting-${Date.now()}`,
-      type: 'action',
-      thinking: `**Connecting to backend:**\n\n- Endpoint: ${config.public.orchestratorUrl}/chat\n- Enabled data sources: ${enabledSources}\n- Sending query to RAG backend\n- Waiting for response...`,
-      timestamp: new Date()
-    })
-
-    const response = await sendSmartMessage(userMessage, {
-      dataSources: {
-        project_db: dataSources.value.project_db,
-        code_db: dataSources.value.code_db,
-        coop_manual: dataSources.value.coop_manual
-      }
-    })
-    
-    // Check if response indicates an error
-    const hasError = response.message && (
-      response.message.toLowerCase().includes('error') ||
-      response.message.toLowerCase().includes('failed') ||
-      response.message.toLowerCase().includes('unable')
-    )
-    
-    if (hasError) {
-      emitAgentLog({
-        id: `error-${Date.now()}`,
-        type: 'error',
-        thinking: `**Backend processing error:**\n\nThe backend encountered an issue while processing your query:\n\n- Response: "${response.message}"\n- This may be due to:\n  - Database connection issues (Supabase not initialized)\n  - Model configuration problems\n  - Missing dependencies\n\n**Troubleshooting:**\n- Check backend logs for detailed error information\n- Verify Supabase configuration in backend\n- Ensure all required services are running`,
-        timestamp: new Date()
-      })
-    } else if (response.metadata?.citations) {
-      emitAgentLog({
-        id: `result-${Date.now()}`,
-        type: 'result',
-        thinking: `**Found relevant information:**\n\n- Discovered **${response.metadata.citations}** relevant sources\n- Synthesizing information from multiple documents\n- Preparing comprehensive answer\n\n**Sources used:**\n${response.metadata.route ? `- ${response.metadata.route}` : ''}`,
-        timestamp: new Date()
-      })
-    }
-    
-    // Show thinking indicator - adjust based on message length/complexity
-    const messageLength = message.length
-    const isComplex = messageLength > 100 || message.toLowerCase().includes('analyze') || message.toLowerCase().includes('explain')
-    
-    if (isComplex) {
-      startThinking([
-        'Understanding your question...',
-        'Searching knowledge base...',
-        'Analyzing relevant information...',
-        'Synthesizing response...',
-        'Preparing detailed answer...'
-      ])
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Longer for complex questions
-    } else {
-      startThinking([
-        'Processing your request...',
-        'Searching information...',
-        'Preparing response...'
-      ])
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Shorter for simple questions
-    }
-    
-    // Type out the response gradually
-    const messageId = (Date.now() + 1).toString()
-    messages.value.push({
-      id: messageId,
-      role: 'assistant',
-      content: '',
-      source: response.source,
-      timestamp: new Date(),
-      isTyping: true
-    })
-    
-    await scrollToBottom()
-    await typeMessageContent(messageId, response.message)
-
-    emit('responseReceived', response)
-  } catch (error) {
-    console.error('Chat error:', error)
-    
-    emitAgentLog({
-      id: `error-${Date.now()}`,
-      type: 'error',
-      thinking: `**Encountered an error:**\n\nI had trouble processing your request:\n- ${error instanceof Error ? error.message : 'Unknown error occurred'}\n\nThis might be due to:\n- Backend service temporarily unavailable\n- Network connectivity issues\n- Query format needs adjustment\n\nPlease try rephrasing your question or try again in a moment.`,
-      timestamp: new Date()
-    })
-
-    messages.value.push({
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: 'I encountered an error processing your request. Please check the Agent Thinking panel for details, or try rephrasing your question.',
-      timestamp: new Date()
-    })
-  } finally {
-    isLoading.value = false
-    await scrollToBottom()
-  }
 }
 
 function formatMessage(text: string): string {
@@ -599,7 +420,7 @@ function formatMessage(text: string): string {
 
 async function handleModelDesignWorkflow(
   message: string, 
-  action: 'initial_request' | 'confirm_parameters' | 'create_bridge'
+  action: 'initial_request' | 'confirm_parameters' | 'create_bridge' | 'show_mto_details'
 ) {
   try {
     if (action === 'initial_request') {
@@ -734,9 +555,9 @@ async function handleModelDesignWorkflow(
 
       // Create the model
       const newModel = await createModel(
-        modelDesignState.value.parameters,
-        modelDesignState.value.similarProjects,
-        bridgeType
+        modelDesignState.value.parameters.span!,
+        bridgeType,
+        modelDesignState.value.parameters
       )
 
       // Determine bridge width based on traffic type
@@ -778,6 +599,58 @@ async function handleModelDesignWorkflow(
         messageId,
         `✅ I've created the ${bridgeType} bridge design model!\n\n**Design Summary:**\n- **Span:** ${modelDesignState.value.parameters.span}m\n- **Bridge Width:** ${bridgeWidth}\n- **Traffic Type:** ${modelDesignState.value.parameters.trafficType || 'Mixed'}\n\n**Bridge Width:**\n${widthExplanation}\n\n**Selected Features:**\nThe design incorporates structural systems and features from the reference projects that are proven for this span length. The ${bridgeType} bridge type was chosen for its structural efficiency and suitability for ${modelDesignState.value.parameters.span}m spans. Design elements reference successful approaches from similar past projects while ensuring compliance with CSA S6 Canadian Highway Bridge Design Code requirements.\n\nThe model is now available in your project and ready for review.`
       )
+      
+      // Update state to wait for user input before showing MTO details
+      modelDesignState.value.step = 'model_created'
+    } else if (action === 'show_mto_details') {
+      // Show MTO details with images when user sends any message after model creation
+      const bridgeType = modelDesignState.value.parameters.bridgeType || 'bridge'
+      
+      emitAgentLog({
+        id: `mto-details-${Date.now()}`,
+        type: 'result',
+        thinking: `**Showing MTO Details:**\n\nBased on the bridge design, I'm displaying relevant Material Take-Off (MTO) details:\n\n1. **Section at the wing wall** - Shows the structural details and material requirements for the wing wall section\n2. **Typical detail at a pier** - Illustrates the standard connection and material details at pier locations\n\nThese details are based on the ${modelDesignState.value.parameters.span}m span ${bridgeType} bridge design that was created.`,
+        timestamp: new Date()
+      })
+      
+      // Show thinking indicator for 2 seconds
+      startThinking([
+        'Analyzing bridge design...',
+        'Searching for relevant MTO details...',
+        'Preparing detail drawings...'
+      ])
+      
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      stopThinking()
+      
+      const mtoMessageId = (Date.now() + 1).toString()
+      messages.value.push({
+        id: mtoMessageId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+        isTyping: true,
+        images: [
+          {
+            url: '/Detail 1.jpg',
+            caption: 'Section at the wing wall'
+          },
+          {
+            url: '/Detail 2.png',
+            caption: 'Typical detail at a pier'
+          }
+        ]
+      })
+      
+      await scrollToBottom()
+      await typeMessageContent(
+        mtoMessageId,
+        'I can find for you relevant MTO details based on this design.'
+      )
+      
+      // Update state after showing MTO details
+      modelDesignState.value.step = 'mto_shown'
     }
   } catch (error) {
     console.error('Model design workflow error:', error)
@@ -998,11 +871,10 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
   try {
     // Handle new RFP in project folder
     if (action === 'new_rfp') {
-      const projectFolder = extractProjectFolder(message)
-      if (!projectFolder) {
-        await addTypedMessage('I couldn\'t find a project folder in your message. Please specify which project folder contains the RFP (e.g., "new RFP in project 2025-12-001").', undefined, 300)
-        return
-      }
+      // Extract project folder from message, or use default
+      const projectFolder = extractProjectFolder(message) || rfpProposalState.value.projectFolder || '2025-12-001'
+      // Store project folder in state
+      rfpProposalState.value.projectFolder = projectFolder
       
       emitAgentLog({
         id: `rfp-search-${Date.now()}`,
@@ -1032,7 +904,11 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
           projectFolder
         }
         
-        await addTypedMessage(`I have found ${rfpResult.fileName}, would you like me to open it?`, undefined, 300)
+        await addTypedMessage(
+          `I have found ${rfpResult.fileName}. When you're ready, I can open it for you.`,
+          undefined,
+          300
+        )
       } else {
         stopThinking()
         await addTypedMessage(`I couldn't find an RFP file in project folder ${projectFolder}. Please check the folder path or provide more details.`, undefined, 300)
@@ -1043,8 +919,9 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
     // Handle opening the found RFP
     if (action === 'open_rfp') {
       if (!rfpProposalState.value.rfpPath) {
-        await addTypedMessage('I don\'t have an RFP to open. Please mention a new RFP first.', undefined, 300)
-        return
+        // Fallback to demo RFP if path missing
+        rfpProposalState.value.rfpPath = '/writing/Structural Engineer RFP 63023.pdf'
+        rfpProposalState.value.rfpFileName = 'Structural Engineer RFP 63023.pdf'
       }
       
       // Add RFP to document list
@@ -1061,7 +938,11 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
       
       rfpProposalState.value.step = 'rfp_opened'
       
-      await addTypedMessage(`I've added ${rfpProposalState.value.rfpFileName} to the side panel. Click on it to view it in the main panel.\n\nWould you like me to provide a summary of key things to consider about this RFP?`, undefined, 300)
+      await addTypedMessage(
+        `I've added ${rfpProposalState.value.rfpFileName} to the side panel. Click on it to view it in the main panel.\n\nOn your next message, I'll summarize the key things to consider in this RFP.`,
+        undefined,
+        300
+      )
       return
     }
     
@@ -1243,6 +1124,9 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
           undefined,
           300
         )
+        
+        // Update workflow state to section_added
+        rfpProposalState.value.step = 'section_added'
       } catch (error) {
         console.error('Error adding section:', error)
         stopThinking()
@@ -1313,33 +1197,11 @@ async function handleRFPWorkflow(message: string, action: 'new_rfp' | 'open_rfp'
         timestamp: new Date()
       })
     } else if (action === 'export_word') {
-      emitAgentLog({
-        id: `rfp-export-${Date.now()}`,
-        type: 'action',
-        thinking: `**Exporting to Word:**\n\nI'll:\n1. Format the proposal content\n2. Send it to the local agent\n3. Create a Word document on your computer\n4. Save it in your documents folder\n\nThis allows you to use the proposal in your standard workflow.`,
-        timestamp: new Date()
-      })
-
-      // Get current draft content from workspace
-      const draftContent = workspace?.state.value.draftContent || ''
+      await addTypedMessage('I will open word with your new RFP document', undefined, 300)
       
-      if (draftContent) {
-        startThinking([
-          'Preparing document content...',
-          'Formatting for Word export...',
-          'Generating Word document...',
-          'Saving to local drive...'
-        ])
-        
-        // Export is moderate complexity - 1.2 seconds
-        await new Promise(resolve => setTimeout(resolve, 1200))
-        
-        await exportToWord(draftContent, 'Proposal.docx')
-        
-        await addTypedMessage('✅ Proposal has been exported to Word and saved to your computer!', undefined, 300)
-      } else {
-        await addTypedMessage('I don\'t see a draft proposal to export. Please write a proposal first, or let me know if you\'d like me to generate one.', undefined, 300)
-      }
+      // Reset workflow state after export completes
+      rfpProposalState.value.step = 'initial'
+      return
     }
   } catch (error) {
     console.error('RFP workflow error:', error)

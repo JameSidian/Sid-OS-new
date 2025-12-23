@@ -1,43 +1,44 @@
 <template>
   <div class="h-full">
-    <!-- Welcome Screen (Project Selection) -->
-    <div v-if="!selectedProject" class="h-full flex flex-col items-center justify-center">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">
+    <!-- Welcome Screen (Project Selection) - Modern Apple-like Design -->
+    <div v-if="!selectedProject" class="h-full flex flex-col items-center justify-center px-8">
+      <h2 class="text-4xl font-light text-gray-900 mb-16 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
         Select one of the projects you have been assigned and get to work
       </h2>
       
-      <div class="grid grid-cols-4 gap-6 mt-8">
+      <div class="grid grid-cols-4 gap-8 mt-8 max-w-6xl">
         <button
           v-for="project in assignedProjects"
           :key="project.id"
           @click="selectProject(project)"
           :class="[
-            'p-6 rounded-lg border-4 transition-all hover:scale-105',
+            'group relative p-8 rounded-3xl transition-all duration-300 ease-out backdrop-blur-sm',
             selectedProjectId === project.id
-              ? 'border-green-400 bg-green-50'
-              : 'border-gray-300 bg-white hover:border-purple-400'
+              ? 'bg-white/80 shadow-2xl scale-105 border border-gray-200/50'
+              : 'bg-white/40 hover:bg-white/60 hover:scale-105 hover:shadow-xl border border-transparent hover:border-gray-200/50'
           ]"
         >
           <div class="text-center">
-            <svg class="w-16 h-16 mx-auto mb-2 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z"/>
-            </svg>
-            <p class="font-semibold text-gray-800">{{ project.id }}</p>
-            <p class="text-sm text-gray-600 mt-1">{{ project.name }}</p>
+            <div :class="[
+              'w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all duration-300',
+              selectedProjectId === project.id
+                ? 'bg-gradient-to-br from-purple-500 to-purple-700 shadow-lg'
+                : 'bg-gradient-to-br from-purple-400 to-purple-600 group-hover:shadow-lg'
+            ]">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-900 text-lg mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ project.id }}</p>
+            <p class="text-sm text-gray-600 font-light" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ project.name }}</p>
           </div>
         </button>
       </div>
-
-      <button
-        class="mt-8 px-6 py-2 bg-pink-200 text-purple-700 rounded-lg hover:bg-pink-300 transition-colors font-medium"
-      >
-        SELECT DIFFERENT PROJECT
-      </button>
     </div>
 
     <!-- Workspace Content (shown when workspace has content, even without selected task) -->
     <div v-else-if="workspaceState.mode !== 'empty'" class="h-full flex flex-col">
-      <div class="flex-1 min-h-0 bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="flex-1 min-h-0 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden border border-gray-200/50">
         <!-- PDF Viewer -->
         <PDFViewer
           v-if="workspaceState.mode === 'pdf'"
@@ -73,18 +74,18 @@
     </div>
 
     <!-- Project Overview -->
-    <div v-else-if="selectedProject && !selectedTask" class="h-full">
-      <div class="mb-6">
-        <div class="bg-purple-700 text-white px-4 py-2 rounded-lg inline-block mb-4">
-          Tasks/Work/{{ selectedProject.id }}
+    <div v-else-if="selectedProject && !selectedTask" class="h-full px-8 py-8">
+      <div class="mb-8">
+        <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-xl inline-block mb-5 shadow-lg">
+          <span class="font-medium text-sm tracking-wide">Tasks/Work/{{ selectedProject.id }}</span>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800">Project Overview</h1>
+        <h1 class="text-4xl font-light text-gray-900 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">Project Overview</h1>
       </div>
 
       <div class="grid grid-cols-2 gap-6">
         <!-- Completed Tasks -->
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">Completed</h2>
+        <div class="bg-white/60 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-gray-200/50">
+          <h2 class="text-2xl font-light text-gray-900 mb-6 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">Completed</h2>
           <ul class="space-y-2 mb-6">
             <li v-for="task in completedTasks" :key="task.id" class="text-gray-700">
               ✓ {{ task.name }}
@@ -100,8 +101,8 @@
         </div>
 
         <!-- To-Do Tasks -->
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">To-Do</h2>
+        <div class="bg-white/60 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-gray-200/50">
+          <h2 class="text-2xl font-light text-gray-900 mb-6 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">To-Do</h2>
           <ul class="space-y-2 mb-6">
             <li
               v-for="task in todoTasks"
@@ -124,16 +125,16 @@
     </div>
 
     <!-- Task Detail View - Workspace Area -->
-    <div v-else-if="selectedTask" class="h-full flex flex-col">
-      <div class="mb-6 flex-shrink-0">
-        <div class="bg-purple-700 text-white px-4 py-2 rounded-lg inline-block mb-4">
-          Tasks/Work/{{ selectedProject.id }}/{{ selectedTask.name }}
+    <div v-else-if="selectedTask" class="h-full flex flex-col px-8 py-8">
+      <div class="mb-8 flex-shrink-0">
+        <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-xl inline-block mb-5 shadow-lg">
+          <span class="font-medium text-sm tracking-wide">Tasks/Work/{{ selectedProject.id }}/{{ selectedTask.name }}</span>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800">{{ selectedTask.name }}</h1>
+        <h1 class="text-4xl font-light text-gray-900 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">{{ selectedTask.name }}</h1>
       </div>
 
       <!-- Workspace Content Area - Shows PDF, Draft, Model, or Empty State -->
-      <div class="flex-1 min-h-0 bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="flex-1 min-h-0 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden border border-gray-200/50">
         <!-- PDF Viewer -->
         <PDFViewer
           v-if="workspaceState.mode === 'pdf'"
@@ -167,8 +168,8 @@
         />
 
         <!-- Empty State / Task Details -->
-        <div v-else class="h-full bg-white rounded-lg p-6 shadow-sm">
-          <p class="text-gray-700 text-lg mb-6">
+        <div v-else class="h-full bg-white/60 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-gray-200/50 flex items-center justify-center">
+          <p class="text-gray-700 text-xl font-light tracking-wide" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
             Let's Get Started...Type in the Chat What you Want to Do
           </p>
           

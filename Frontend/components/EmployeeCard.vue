@@ -1,20 +1,20 @@
 <template>
   <div
-    class="bg-foundation-2 border border-foundation-line rounded-lg p-6 cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02]"
+    class="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl p-6 cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] shadow-xl"
     @click="$emit('click')"
   >
     <!-- Header -->
     <div class="mb-4">
-      <h3 class="text-lg font-semibold text-foreground">{{ employee.name }}</h3>
-      <span class="inline-block mt-2 px-2 py-1 text-xs rounded bg-foundation text-foreground-muted">
+      <h3 class="text-lg font-semibold text-gray-900">{{ employee.name }}</h3>
+      <span class="inline-block mt-2 px-2 py-1 text-xs rounded-lg bg-gray-100 text-gray-600">
         {{ employee.role }}
       </span>
     </div>
 
     <!-- Hours Display -->
     <div class="mb-4">
-      <p class="text-sm text-foreground-muted">{{ getHoursLabel() }}</p>
-      <p class="text-2xl font-bold text-foreground">{{ employee.weeklyHours }}h</p>
+      <p class="text-sm text-gray-500">{{ getHoursLabel() }}</p>
+      <p class="text-2xl font-bold text-gray-900">{{ employee.weeklyHours }}h</p>
     </div>
 
     <!-- Pie Chart (Vue version of v0 donut chart) -->
@@ -36,7 +36,7 @@
             cx="0"
             cy="0"
             r="22"
-            class="fill-foundation"
+            class="fill-white"
           />
         </g>
       </svg>
@@ -54,13 +54,13 @@
             class="h-3 w-3 rounded-sm"
             :style="{ backgroundColor: COLORS[index % COLORS.length] }"
           />
-          <span class="text-foreground-muted">{{ item.name }}</span>
+          <span class="text-gray-500">{{ item.name }}</span>
         </div>
-        <span class="font-medium text-foreground">{{ item.value }}h</span>
+        <span class="font-medium text-gray-900">{{ item.value }}h</span>
       </div>
       <div
         v-if="employee.weeklyBreakdown.length > 3"
-        class="text-xs text-foreground-muted text-center pt-2"
+        class="text-xs text-gray-500 text-center pt-2"
       >
         +{{ employee.weeklyBreakdown.length - 3 }} more
       </div>
